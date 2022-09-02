@@ -76,7 +76,7 @@ def print_all_max(schedual_list, max_attr):
             print(x)
 
 """
-    פונקמיה ליצירת רשימה של כל הקורסים שחובה לקחת
+    פונקציה ליצירת רשימה של כל הקורסים שחובה לקחת
 """
 def mustTake(sheet, must=[]):
     for row in range(1,sheet.nrows):
