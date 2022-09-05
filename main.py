@@ -84,9 +84,9 @@ def mustTake(sheet, must=[]):
         must.append(str(sheet.cell_value(row,0)))
     return must
 
-def main(maxBreak,freeDay,maxHour,minPerDay):
+def main(maxBreak,freeDay,maxHour,minPerDay,file):
     # מיקום התיקיה
-    location = "C:/Users/danie/documents/Python/calendar_project/DataBase.xls"
+    location = file
     wb = xlrd.open_workbook(location)
 
     # יצירת קורסים שחייבים לקחת
@@ -140,8 +140,7 @@ def create_window(theme):
             [gui.Text("max Break:",justification='center',expand_x=True),gui.Text("Free Day:",justification='center',expand_x=True),gui.Text("Max Hour:",justification='center',expand_x=True),gui.Text("Min Hour Per Day:",justification='center',expand_x=True)],
             [gui.Slider(orientation ='horizontal', range=(0,4),default_value=1,expand_x=True,key='-maxBreak-'),gui.Slider(orientation ='horizontal', range=(1,6),default_value=6,expand_x=True,key='-freeDay-'),gui.Slider(orientation ='horizontal', range=(8,23),default_value=20,expand_x=True,key='-maxHour-'),gui.Slider(orientation ='horizontal', range=(1,5),default_value=3,expand_x=True,key='-minPerDay-')],
             [gui.Button("<<",expand_x=True,key='-<-'),gui.Button("Start",expand_x=True,key='-start-'),gui.Button("Load",expand_x=True,key='-load-'),gui.Button(">>",expand_x=True,key='->-')],
-            [gui.Text("Calendar",justification='center',expand_x=True,pad=(5,10),key='-score-',font='Ariel 20')],
-            
+            [gui.Text("Calendar",justification='center',expand_x=True,pad=(5,10),key='-score-',font='Ariel 20'),gui.Text("Choose a file: "), gui.FileBrowse(key='-file-'),gui.Button('Submit',key='-submit-')],
             [gui.Column(column, scrollable=True, vertical_scroll_only=True,expand_y=True,expand_x=True)]]
     return gui.Window(program_name,layout)
 
@@ -171,6 +170,10 @@ if __name__ == "__main__":
     window['-load-'].update(disabled=True)
     window['-<-'].update(disabled=True)
     window['->-'].update(disabled=True)
+    window['-start-'].update(disabled=True)
+
+    file = ''
+
     while True:
         event, values = window.read()
 
@@ -180,11 +183,13 @@ if __name__ == "__main__":
         if event in theme_engine[1]:
             window.close()
             window = create_window(event)
+        if event in ['-submit-']:
+            window['-start-'].update(disabled=False)
+            file = values['-file-']
 
         if event in ['-start-']:
-            schedual_list = main(values['-maxBreak-'],values['-freeDay-'],values['-maxHour-'],values['-minPerDay-'])
+            schedual_list = main(values['-maxBreak-'],values['-freeDay-'],values['-maxHour-'],values['-minPerDay-'],file)
             window['-load-'].update(disabled=False)
-            # window['-start-'].update(disabled=True)
 
         # איפוס הלוח
         if event in ['-load-']:
@@ -203,7 +208,6 @@ if __name__ == "__main__":
             current_schedual+=1
             reset_board(window)
             loadBoard(window, schedual_list[current_schedual],current_schedual)
-    
         
     window.close()
 
