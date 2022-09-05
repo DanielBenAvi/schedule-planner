@@ -1,9 +1,74 @@
 from tracemalloc import start
 import xlrd  # טיפול בקבצי אקסל
-# from operator import attrgetter # מציאת אובייקט מקסלימלי באמצעות תכונה מסויימת
-from Course import Course
-from Schedual import Schedual
+# from Course import Course
+# from Schedual import Schedual
 import PySimpleGUI as gui
+
+class Course():
+    def __init__(self, name, start, end, lecturer, score) -> None:
+        self.name = name
+        self.start = start
+        self.end = end
+        self.lecturer = lecturer
+        self.score = score
+
+    def __str__(self) -> str:
+        weekday = {1:'Sun',2:'Mon',3:'Tue',4:'Wed',5:'Thu',6:'Fri'}
+        return f'{weekday[int(self.start/100)]}: {int(self.start%100)}:00-{int(self.end%100)-1}:50 ->  {self.name} ,   {self.lecturer.__str__()},   score = {self.score}'
+
+class Schedual():
+
+    def __init__(self) -> None:
+        self.courses = []
+        self.schedualScore = 0
+        self.valid = True
+
+    def addCourse(self, course) -> None:
+        self.courses.append(course)
+        self.courses.sort(key=lambda x: x.start)  # order after adding
+
+    def calcScore(self) -> int:
+        for course in self.courses:
+            self.schedualScore += course.score
+        return self.schedualScore
+
+    def isValid(self,MAX_BREAK,FREE_DAY,TOP_HOUR,MIN_HOUR_PER_DAY) -> bool:
+        for index in range(0, len(self.courses)-1):
+            # remove not valid
+            if(self.courses[index].end > self.courses[index + 1].start):
+                return False
+            # remove if have breaks longer than 2 hours
+            if(int(self.courses[index].start/100) == int(self.courses[index + 1].start/100)):
+                if((int(self.courses[index+1].start%100) - int(self.courses[index].end%100)) > MAX_BREAK):
+                    return False
+
+        for index in range(0, len(self.courses)):
+            # remove end after 20:00
+            if(self.courses[index].end%100>TOP_HOUR):
+                return False
+            # remove fridays
+            if(int(self.courses[index].start/100)>(FREE_DAY-1)):
+                return False
+        
+        # remove days with only 3 hours
+        for day in range(1,7):
+            sum = 0
+            for index in range(0, len(self.courses)):
+                if(int(self.courses[index].start/100)==day):
+                    sum = sum + int(int(self.courses[index].end%100)-int(self.courses[index].start%100))
+            if(sum <= MIN_HOUR_PER_DAY and sum > 0):
+                return False
+
+        return True
+
+    def __str__(self) -> str:
+        str = '------\n'
+        str += f'score = {self.schedualScore}\n'
+        for course in self.courses:
+            str += course.__str__() + '\n'
+        return str
+
+
 
 '''
     קבועים
@@ -86,7 +151,7 @@ def mustTake(sheet, must=[]):
 
 def main(maxBreak,freeDay,maxHour,minPerDay,file):
     # מיקום התיקיה
-    location = file
+    location = file 
     wb = xlrd.open_workbook(location)
 
     # יצירת קורסים שחייבים לקחת
