@@ -1,3 +1,4 @@
+from tracemalloc import start
 import xlrd  # טיפול בקבצי אקסל
 # from Course import Course
 # from Schedual import Schedual
@@ -72,7 +73,7 @@ class Schedual():
 '''
     קבועים
 '''
-WEEKDAYS_WIDTH = 22
+WEEKDAYS_WIDTH = 35
 WEEKDAYS_HIGHT = 3
 
 
@@ -202,7 +203,7 @@ def create_window(theme):
 
     layout = [
             [gui.Text("max Break:",justification='center',expand_x=True),gui.Text("Free Day:",justification='center',expand_x=True),gui.Text("Max Hour:",justification='center',expand_x=True),gui.Text("Min Hour Per Day:",justification='center',expand_x=True)],
-            [gui.Slider(orientation ='horizontal', range=(0,4),default_value=1,expand_x=True,key='-maxBreak-'),gui.Slider(orientation ='horizontal', range=(1,6),default_value=6,expand_x=True,key='-freeDay-'),gui.Slider(orientation ='horizontal', range=(8,23),default_value=20,expand_x=True,key='-maxHour-'),gui.Slider(orientation ='horizontal', range=(1,5),default_value=3,expand_x=True,key='-minPerDay-')],
+            [gui.Slider(orientation ='horizontal', range=(0,10),default_value=1,expand_x=True,key='-maxBreak-'),gui.Slider(orientation ='horizontal', range=(1,7),default_value=6,expand_x=True,key='-freeDay-'),gui.Slider(orientation ='horizontal', range=(8,23),default_value=20,expand_x=True,key='-maxHour-'),gui.Slider(orientation ='horizontal', range=(1,10),default_value=3,expand_x=True,key='-minPerDay-')],
             [gui.Button("<<",expand_x=True,key='-<-'),gui.Button("Start",expand_x=True,key='-start-'),gui.Button("Load",expand_x=True,key='-load-'),gui.Button(">>",expand_x=True,key='->-')],
             [gui.Text("Calendar",justification='center',expand_x=True,pad=(5,10),key='-score-',font='Ariel 20'),gui.Text("Choose a file: "), gui.FileBrowse(key='-file-'),gui.Button('Submit',key='-submit-')],
             [gui.Column(column, scrollable=True, vertical_scroll_only=True,expand_y=True,expand_x=True)]]
